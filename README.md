@@ -10,7 +10,7 @@ While these artifacts were developed within financial services and governance fr
 ## Key Technical Highlights
 
 * **Power BI & Advanced Excel:** Developed interactive Issues & LPI trackers to quantify the financial impact of operational errors.
-* ** Python Automation:** Applied algorithmic thinking to convert manual tracking registers into automated frameworks for 2,000+ incidents.
+* Python Automation:** Applied algorithmic thinking to convert manual tracking registers into automated frameworks for 2,000+ incidents.
 * **SQL Analytics:** Built window functions and CTE queries to identify failure demand and agent performance trends.
 * **Process Architecture:** Visio swim-lane documentation establishing audit-ready baselines for multi-stakeholder workflows.
 
