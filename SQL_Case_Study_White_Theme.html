@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Case Study | Contact Centre Analytics</title>
+<style>
+  :root {
+    --bg:       #ffffff;
+    --bg2:      #f8fafc;
+    --bg3:      #f1f5f9;
+    --border:   #e2e8f0;
+    --border2:  #cbd5e1;
+    --navy:     #0f172a;
+    --navy2:    #1e293b;
+    --blue:     #1d4ed8;
+    --blue2:    #2563eb;
+    --blue3:    #dbeafe;
+    --red:      #dc2626;
+    --red2:     #fef2f2;
+    --red3:     #fee2e2;
+    --green:    #16a34a;
+    --green2:   #f0fdf4;
+    --green3:   #dcfce7;
+    --amber:    #d97706;
+    --amber2:   #fffbeb;
+    --amber3:   #fef3c7;
+    --purple:   #7c3aed;
+    --purple2:  #ede9fe;
+    --teal:     #0d9488;
+    --teal2:    #f0fdfa;
+    --muted:    #64748b;
+    --muted2:   #94a3b8;
+    --text:     #1e293b;
+    --text2:    #334155;
+
+    /* SQL syntax — dark on light */
+    --kw:     #1d4ed8;
+    --fn:     #0d9488;
+    --str:    #16a34a;
+    --cm:     #94a3b8;
+    --num:    #dc2626;
+    --op:     #7c3aed;
+    --tbl:    #ea580c;
+    --al:     #db2777;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); font-family:'Segoe UI',sans-serif; color:var(--text); line-height:1.6; }
+
+  /* TOPBAR */
+  .topbar {
+    background:var(--navy);
+    border-bottom:3px solid var(--blue2);
+    padding:16px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .topbar-left { display:flex; align-items:center; gap:14px; }
+  .logo {
+    width:36px; height:36px; border-radius:6px;
+    background:var(--blue2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:900; color:#fff;
+  }
+  .title  { font-size:17px; font-weight:700; letter-spacing:.3px; color:#fff; }
+  .sub    { font-size:11px; color:#94a3b8; margin-top:1px; }
+  .badges { display:flex; gap:8px; align-items:center; }
+  .badge  { font-size:10px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; padding:3px 10px; border-radius:3px; }
+  .b-white  { background:rgba(255,255,255,.12); color:#e2e8f0; border:1px solid rgba(255,255,255,.2); }
+  .b-blue   { background:var(--blue2); color:#fff; }
+  .b-teal   { background:var(--teal); color:#fff; }
+
+  /* DISC */
+  .disc {
+    background:var(--amber2); border-bottom:1px solid var(--amber3);
+    padding:7px 32px; font-size:10px; color:var(--amber);
+  }
+  .disc strong { color:var(--navy); }
+
+  /* MAIN */
+  .main { padding:28px 32px; max-width:1180px; margin:0 auto; }
+
+  /* SECTION DIVIDER */
+  .sdiv {
+    display:flex; align-items:center; gap:12px;
+    margin:4px 0 18px;
+  }
+  .sdiv span {
+    font-size:10px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; color:var(--muted); white-space:nowrap;
+  }
+  .sdiv::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* CASE BRIEF */
+  .brief {
+    background:var(--navy); border-radius:10px;
+    padding:24px 28px; margin-bottom:24px;
+  }
+  .brief-title { font-size:17px; font-weight:700; color:#fff; margin-bottom:4px; }
+  .brief-sub   { font-size:12px; color:#94a3b8; margin-bottom:18px; }
+  .brief-grid  { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .brief-item  { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:14px 16px; }
+  .brief-item h4 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:7px; }
+  .brief-item p  { font-size:11px; color:#cbd5e1; line-height:1.7; }
+  .h-red    { color:#f87171; }
+  .h-blue   { color:#93c5fd; }
+  .h-green  { color:#86efac; }
+
+  /* SCHEMA */
+  .schema-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:24px; }
+  .table-card  { background:var(--bg); border:1px solid var(--border); border-radius:8px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .table-header {
+    background:var(--navy2); padding:10px 14px;
+    display:flex; align-items:center; gap:8px;
+    border-bottom:1px solid var(--border);
+  }
+  .table-icon { font-size:13px; }
+  .table-name { font-size:12px; font-weight:700; color:#f97316; font-family:monospace; }
+  .table-desc { font-size:10px; color:#94a3b8; margin-left:auto; }
+  .col-list   { padding:8px 0; }
+  .col-row    { display:flex; align-items:center; padding:5px 14px; gap:8px; font-size:11px; border-bottom:1px solid var(--bg3); }
+  .col-row:last-child { border-bottom:none; }
+  .col-row:hover      { background:var(--bg2); }
+  .col-name  { color:var(--text2); flex:1; }
+  .col-type  { color:var(--purple); font-size:10px; font-family:monospace; }
+  .col-pk    { background:var(--amber3); color:var(--amber); font-size:8px; font-weight:700; letter-spacing:.5px; padding:1px 5px; border-radius:2px; border:1px solid #fde68a; }
+  .col-fk    { background:var(--blue3); color:var(--blue2); font-size:8px; font-weight:700; letter-spacing:.5px; padding:1px 5px; border-radius:2px; border:1px solid #bfdbfe; }
+
+  /* QUERY BLOCK */
+  .query-block {
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:10px;
+    margin-bottom:22px;
+    overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+  }
+  .query-header {
+    background:var(--bg2);
+    padding:12px 18px;
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .query-header-left { display:flex; align-items:center; gap:10px; }
+  .query-num   {
+    background:var(--blue2); color:#fff;
+    font-size:10px; font-weight:700; padding:3px 9px;
+    border-radius:4px; letter-spacing:.5px; font-family:monospace;
+  }
+  .query-title { font-size:13px; font-weight:600; color:var(--navy); }
+  .query-badge { font-size:9px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; padding:3px 9px; border-radius:4px; }
+  .qb-inter    { background:var(--amber3); color:var(--amber); border:1px solid #fde68a; }
+  .qb-advanced { background:var(--red3);   color:var(--red);   border:1px solid #fecaca; }
+  .qb-expert   { background:var(--purple2);color:var(--purple);border:1px solid #ddd6fe; }
+
+  /* BODY SPLIT */
+  .query-body { display:grid; grid-template-columns:280px 1fr; }
+  .query-context { padding:16px 18px; border-right:1px solid var(--border); background:var(--bg2); }
+  .query-context h4 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); margin-bottom:7px; }
+  .query-context p  { font-size:11px; color:var(--text2); line-height:1.7; margin-bottom:10px; }
+  .ctx-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+  .ctx-tag  { font-size:9px; background:var(--bg3); color:var(--muted); border:1px solid var(--border); padding:2px 7px; border-radius:3px; font-family:monospace; }
+
+  /* SQL CODE */
+  .sql-outer { background:#1e293b; overflow-x:auto; }
+  pre {
+    padding:18px 20px;
+    font-family:'Cascadia Code','Consolas','Courier New',monospace;
+    font-size:12px; line-height:1.9;
+    background:transparent; color:#e2e8f0;
+  }
+  .kw  { color:#93c5fd; font-weight:700; }
+  .fn  { color:#6ee7b7; font-weight:600; }
+  .str { color:#86efac; }
+  .cm  { color:#64748b; font-style:italic; }
+  .num { color:#f9a8d4; }
+  .op  { color:#c4b5fd; }
+  .tbl { color:#fb923c; }
+  .al  { color:#fde68a; }
+
+  /* RESULT SECTION */
+  .result-wrap { padding:14px 18px 16px; border-top:1px solid var(--border); background:var(--bg); }
+  .result-label {
+    font-size:10px; font-weight:700; text-transform:uppercase;
+    letter-spacing:1px; color:var(--muted); margin-bottom:10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .result-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .result-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .result-table thead tr { background:var(--bg3); border-bottom:2px solid var(--border2); }
+  .result-table th { text-align:left; padding:7px 10px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); }
+  .result-table tbody tr { border-bottom:1px solid var(--border); }
+  .result-table tbody tr:hover { background:var(--bg2); }
+  .result-table td { padding:8px 10px; color:var(--text2); }
+  .result-table td.hi  { color:var(--navy); font-weight:600; }
+  .result-table td.red { color:var(--red); font-weight:600; }
+  .result-table td.grn { color:var(--green); font-weight:600; }
+  .result-table td.amb { color:var(--amber); font-weight:600; }
+  .result-table td.blu { color:var(--blue2); font-weight:600; }
+  .result-table td.pur { color:var(--purple); font-weight:600; }
+  .pill { display:inline-block; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:700; }
+  .pill-red { background:var(--red3); color:var(--red); border:1px solid #fecaca; }
+  .pill-grn { background:var(--green3); color:var(--green); border:1px solid #bbf7d0; }
+  .pill-amb { background:var(--amber3); color:var(--amber); border:1px solid #fde68a; }
+  .result-note { font-size:10px; color:var(--muted); margin-top:8px; font-style:italic; border-left:2px solid var(--border2); padding-left:8px; }
+
+  /* INSIGHT STRIP */
+  .insight {
+    background:var(--teal2);
+    border-top:1px solid #ccfbf1;
+    padding:12px 18px;
+  }
+  .insight p { font-size:11px; color:#134e4a; line-height:1.6; }
+  .insight strong { color:var(--navy); }
+
+  /* FOOTER */
+  .footer {
+    background:var(--navy); padding:14px 32px;
+    display:flex; justify-content:space-between;
+    font-size:10px; color:#64748b;
+    margin-top:10px;
+  }
+  .footer span { color:#94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">SZ</div>
+    <div>
+      <div class="title">SQL Case Study · Contact Centre Analytics</div>
+      <div class="sub">Data Extraction · Root Cause Analysis · Performance Intelligence</div>
+    </div>
+  </div>
+  <div class="badges">
+    <span class="badge b-white">6 Queries</span>
+    <span class="badge b-teal">Intermediate → Expert</span>
+    <span class="badge b-blue">Portfolio Artifact</span>
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disc">
+  <strong>Portfolio Note:</strong> All data, table structures, and scenarios are original constructs for portfolio demonstration. No client, employer, or member data is used. &nbsp;·&nbsp; Developed by Siyethaba Zulu.
+</div>
+
+<div class="main">
+
+  <!-- BRIEF -->
+  <div class="sdiv"><span>Business Case</span></div>
+  <div class="brief">
+    <div class="brief-title">Reducing Repeat Contacts &amp; SLA Breaches at a BPO Contact Centre</div>
+    <div class="brief-sub">A Senior BA is engaged to analyse contact centre operational data and surface the drivers of repeat contacts, SLA breaches, and agent performance gaps using SQL.</div>
+    <div class="brief-grid">
+      <div class="brief-item">
+        <h4 class="h-red">🔴 The Problem</h4>
+        <p>The contact centre is experiencing a 28% repeat contact rate — customers calling back within 7 days on the same issue. SLA breach costs are rising and leadership lacks visibility into which contact types, agents, and time periods are driving the problem.</p>
+      </div>
+      <div class="brief-item">
+        <h4 class="h-blue">🔵 The Action</h4>
+        <p>The BA extracts and analyses data from the contact centre CRM database using SQL — identifying contact drivers, agent performance, repeat contact patterns, AHT trends, and monetary breach costs by team and segment.</p>
+      </div>
+      <div class="brief-item">
+        <h4 class="h-green">🟢 The Result</h4>
+        <p>3 contact reason codes account for 67% of all repeat contacts. Top 2 underperforming agents contribute 34% of their team's SLA breach cost. Targeted L&amp;D and process fixes are recommended with a projected 18% reduction in repeat contacts.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEMA -->
+  <div class="sdiv"><span>Database Schema</span></div>
+  <div class="schema-grid">
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-icon">🗄️</span>
+        <span class="table-name">contacts</span>
+        <span class="table-desc">Core contact log</span>
+      </div>
+      <div class="col-list">
+        <div class="col-row"><span class="col-name">contact_id</span><span class="col-type">INT</span><span class="col-pk">PK</span></div>
+        <div class="col-row"><span class="col-name">customer_id</span><span class="col-type">INT</span><span class="col-fk">FK</span></div>
+        <div class="col-row"><span class="col-name">agent_id</span><span class="col-type">INT</span><span class="col-fk">FK</span></div>
+        <div class="col-row"><span class="col-name">contact_date</span><span class="col-type">DATETIME</span></div>
+        <div class="col-row"><span class="col-name">contact_reason</span><span class="col-type">VARCHAR</span></div>
+        <div class="col-row"><span class="col-name">channel</span><span class="col-type">VARCHAR</span></div>
+        <div class="col-row"><span class="col-name">handle_time_sec</span><span class="col-type">INT</span></div>
+        <div class="col-row"><span class="col-name">resolved_flag</span><span class="col-type">BIT</span></div>
+        <div class="col-row"><span class="col-name">sla_breach_flag</span><span class="col-type">BIT</span></div>
+        <div class="col-row"><span class="col-name">sla_breach_cost</span><span class="col-type">DECIMAL</span></div>
+        <div class="col-row"><span class="col-name">queue_name</span><span class="col-type">VARCHAR</span></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-icon">🗄️</span>
+        <span class="table-name">agents</span>
+        <span class="table-desc">Agent master</span>
+      </div>
+      <div class="col-list">
+        <div class="col-row"><span class="col-name">agent_id</span><span class="col-type">INT</span><span class="col-pk">PK</span></div>
+        <div class="col-row"><span class="col-name">agent_name</span><span class="col-type">VARCHAR</span></div>
+        <div class="col-row"><span class="col-name">team_id</span><span class="col-type">INT</span><span class="col-fk">FK</span></div>
+        <div class="col-row"><span class="col-name">team_name</span><span class="col-type">VARCHAR</span></div>
+        <div class="col-row"><span class="col-name">hire_date</span><span class="col-type">DATE</span></div>
+        <div class="col-row"><span class="col-name">tenure_months</span><span class="col-type">INT</span></div>
+        <div class="col-row"><span class="col-name">status</span><span class="col-type">VARCHAR</span></div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-icon">🗄️</span>
+        <span class="table-name">customers</span>
+        <span class="table-desc">Customer master</span>
+      </div>
+      <div class="col-list">
+        <div class="col-row"><span class="col-name">customer_id</span><span class="col-type">INT</span><span class="col-pk">PK</span></div>
+        <div class="col-row"><span class="col-name">segment</span><span class="col-type">VARCHAR</span></div>
+        <div class="col-row"><span class="col-name">region</span><span class="col-type">VARCHAR</span></div>
+        <div class="col-row"><span class="col-name">product_type</span><span class="col-type">VARCHAR</span></div>
+        <div class="col-row"><span class="col-name">onboarded_date</span><span class="col-type">DATE</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUERY 1 -->
+  <div class="sdiv"><span>Queries</span></div>
+
+  <div class="query-block">
+    <div class="query-header">
+      <div class="query-header-left">
+        <span class="query-num">Q1</span>
+        <span class="query-title">Contact Volume &amp; SLA Breach Summary by Month</span>
+      </div>
+      <span class="query-badge qb-inter">Intermediate</span>
+    </div>
+    <div class="query-body">
+      <div class="query-context">
+        <h4>Business Question</h4>
+        <p>Leadership needs a monthly overview of contact volume, resolution rates, SLA compliance, and total breach cost to identify which months require deeper investigation.</p>
+        <h4 style="margin-top:12px">Concepts Used</h4>
+        <div class="ctx-tags">
+          <span class="ctx-tag">GROUP BY</span>
+          <span class="ctx-tag">FORMAT()</span>
+          <span class="ctx-tag">COUNT / SUM / AVG</span>
+          <span class="ctx-tag">ROUND / CAST</span>
+          <span class="ctx-tag">ORDER BY</span>
+        </div>
+      </div>
+      <div class="sql-outer">
+<pre><span class="cm">-- Monthly contact performance summary</span>
+<span class="cm">-- Answers: where are our SLA and resolution gaps?</span>
+
+<span class="kw">SELECT</span>
+    <span class="fn">FORMAT</span>(contact_date, <span class="str">'yyyy-MM'</span>)        <span class="kw">AS</span> <span class="al">month</span>,
+    <span class="fn">COUNT</span>(contact_id)                      <span class="kw">AS</span> <span class="al">total_contacts</span>,
+    <span class="fn">SUM</span>(resolved_flag)                     <span class="kw">AS</span> <span class="al">resolved</span>,
+    <span class="fn">SUM</span>(sla_breach_flag)                   <span class="kw">AS</span> <span class="al">sla_breaches</span>,
+    <span class="fn">ROUND</span>(
+        <span class="fn">CAST</span>(<span class="fn">SUM</span>(resolved_flag) <span class="kw">AS</span> FLOAT)
+        / <span class="fn">COUNT</span>(contact_id) * <span class="num">100</span>, <span class="num">1</span>
+    )                                       <span class="kw">AS</span> <span class="al">resolution_rate_pct</span>,
+    <span class="fn">ROUND</span>(
+        <span class="fn">CAST</span>(<span class="fn">SUM</span>(sla_breach_flag) <span class="kw">AS</span> FLOAT)
+        / <span class="fn">COUNT</span>(contact_id) * <span class="num">100</span>, <span class="num">1</span>
+    )                                       <span class="kw">AS</span> <span class="al">breach_rate_pct</span>,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(handle_time_sec) / <span class="num">60.0</span>, <span class="num">1</span>) <span class="kw">AS</span> <span class="al">avg_aht_mins</span>,
+    <span class="fn">ROUND</span>(<span class="fn">SUM</span>(sla_breach_cost), <span class="num">2</span>)         <span class="kw">AS</span> <span class="al">total_breach_cost_r</span>
+
+<span class="kw">FROM</span>  <span class="tbl">contacts</span>
+<span class="kw">WHERE</span> contact_date <span class="op">>=</span> <span class="str">'2025-01-01'</span>
+<span class="kw">GROUP BY</span> <span class="fn">FORMAT</span>(contact_date, <span class="str">'yyyy-MM'</span>)
+<span class="kw">ORDER BY</span> month;</pre>
+      </div>
+    </div>
+    <div class="result-wrap">
+      <div class="result-label">Sample Output</div>
+      <table class="result-table">
+        <thead><tr><th>Month</th><th>Total Contacts</th><th>Resolved</th><th>SLA Breaches</th><th>Resolution %</th><th>Breach Rate %</th><th>Avg AHT (mins)</th><th>Breach Cost (R)</th></tr></thead>
+        <tbody>
+          <tr><td class="hi">2025-01</td><td>1,842</td><td>1,584</td><td>92</td><td class="grn">86.0%</td><td class="grn">5.0%</td><td>6.4</td><td>R 2,140</td></tr>
+          <tr><td class="hi">2025-02</td><td>1,976</td><td>1,660</td><td>138</td><td class="amb">84.0%</td><td class="amb">7.0%</td><td>7.1</td><td class="amb">R 3,877</td></tr>
+          <tr><td class="hi">2025-03</td><td>2,214</td><td>1,750</td><td>287</td><td class="red">79.0%</td><td class="red">13.0%</td><td>8.9</td><td class="red">R 9,102</td></tr>
+          <tr><td class="hi">2025-04</td><td>2,108</td><td>1,748</td><td>211</td><td class="amb">83.0%</td><td class="amb">10.0%</td><td>8.2</td><td class="amb">R 6,540</td></tr>
+        </tbody>
+      </table>
+      <p class="result-note">→ March 2025 flags a significant SLA breach spike (5% → 13%) and R9,102 in breach costs — triggering the root cause investigation in Q2–Q6 below.</p>
+    </div>
+    <div class="insight">
+      <p><strong>BA Insight:</strong> This query surfaces the "when" of the problem. The March spike triggers the deeper investigation — isolating the "what" (Q2), the "who" (Q3), the "when" (Q4), and the "how much" (Q5–Q6). Each query builds on the last.</p>
+    </div>
+  </div>
+
+  <!-- QUERY 2 -->
+  <div class="query-block">
+    <div class="query-header">
+      <div class="query-header-left">
+        <span class="query-num">Q2</span>
+        <span class="query-title">Top Contact Drivers by Repeat Contact Rate</span>
+      </div>
+      <span class="query-badge qb-inter">Intermediate</span>
+    </div>
+    <div class="query-body">
+      <div class="query-context">
+        <h4>Business Question</h4>
+        <p>Which contact reason codes generate the most repeat contacts within 7 days? These are "failure demand" contacts — calls that shouldn't happen if the first contact resolved the issue.</p>
+        <h4 style="margin-top:12px">Concepts Used</h4>
+        <div class="ctx-tags">
+          <span class="ctx-tag">Self JOIN</span>
+          <span class="ctx-tag">DATEDIFF()</span>
+          <span class="ctx-tag">BETWEEN</span>
+          <span class="ctx-tag">GROUP BY</span>
+          <span class="ctx-tag">HAVING</span>
+          <span class="ctx-tag">ORDER BY DESC</span>
+        </div>
+      </div>
+      <div class="sql-outer">
+<pre><span class="cm">-- Identify failure demand by contact reason</span>
+<span class="cm">-- Repeat = same customer calls again within 7 days</span>
+
+<span class="kw">SELECT</span>
+    c1.contact_reason,
+    <span class="fn">COUNT</span>(c1.contact_id)                      <span class="kw">AS</span> <span class="al">total_contacts</span>,
+    <span class="fn">COUNT</span>(c2.contact_id)                      <span class="kw">AS</span> <span class="al">repeat_contacts</span>,
+    <span class="fn">ROUND</span>(
+        <span class="fn">CAST</span>(<span class="fn">COUNT</span>(c2.contact_id) <span class="kw">AS</span> FLOAT)
+        / <span class="fn">COUNT</span>(c1.contact_id) * <span class="num">100</span>, <span class="num">1</span>
+    )                                          <span class="kw">AS</span> <span class="al">repeat_rate_pct</span>,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(c1.handle_time_sec) / <span class="num">60.0</span>, <span class="num">1</span>) <span class="kw">AS</span> <span class="al">avg_aht_mins</span>
+
+<span class="kw">FROM</span>  <span class="tbl">contacts</span> c1
+<span class="kw">LEFT JOIN</span> <span class="tbl">contacts</span> c2
+    <span class="kw">ON</span>  c1.customer_id  <span class="op">=</span> c2.customer_id
+    <span class="kw">AND</span> c1.contact_id   <span class="op">!=</span> c2.contact_id
+    <span class="kw">AND</span> <span class="fn">DATEDIFF</span>(day, c1.contact_date,
+                      c2.contact_date)
+        <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">7</span>
+
+<span class="kw">GROUP BY</span> c1.contact_reason
+<span class="kw">HAVING</span>  <span class="fn">COUNT</span>(c1.contact_id) <span class="op">></span> <span class="num">50</span>
+<span class="kw">ORDER BY</span> repeat_rate_pct <span class="kw">DESC</span>;</pre>
+      </div>
+    </div>
+    <div class="result-wrap">
+      <div class="result-label">Sample Output</div>
+      <table class="result-table">
+        <thead><tr><th>Contact Reason</th><th>Total Contacts</th><th>Repeat Contacts</th><th>Repeat Rate %</th><th>Avg AHT (mins)</th></tr></thead>
+        <tbody>
+          <tr><td class="hi">Payment Query</td><td>842</td><td>378</td><td class="red">44.9%</td><td class="red">9.2</td></tr>
+          <tr><td class="hi">Policy Amendment</td><td>614</td><td>233</td><td class="red">37.9%</td><td>7.8</td></tr>
+          <tr><td class="hi">Document Request</td><td>731</td><td>248</td><td class="amb">33.9%</td><td>5.4</td></tr>
+          <tr><td class="hi">Account Update</td><td>428</td><td>124</td><td class="amb">29.0%</td><td>6.1</td></tr>
+          <tr><td class="hi">New Onboarding Query</td><td>386</td><td>77</td><td class="grn">20.0%</td><td>8.7</td></tr>
+          <tr><td class="hi">General Enquiry</td><td>1,204</td><td>193</td><td class="grn">16.0%</td><td>4.2</td></tr>
+        </tbody>
+      </table>
+      <p class="result-note">→ "Payment Query", "Policy Amendment" and "Document Request" account for 67% of all repeat contacts — priority fix areas for L&amp;D and process redesign.</p>
+    </div>
+    <div class="insight">
+      <p><strong>BA Insight:</strong> The <strong>self-JOIN</strong> pattern links a customer's first contact to any repeat within 7 days. Payment Query at 44.9% repeat rate signals a resolution quality problem, not a volume problem. This is the anchor finding that shapes the entire business case.</p>
+    </div>
+  </div>
+
+  <!-- QUERY 3 -->
+  <div class="query-block">
+    <div class="query-header">
+      <div class="query-header-left">
+        <span class="query-num">Q3</span>
+        <span class="query-title">Agent Performance Scorecard — AHT, FCR &amp; SLA</span>
+      </div>
+      <span class="query-badge qb-inter">Intermediate</span>
+    </div>
+    <div class="query-body">
+      <div class="query-context">
+        <h4>Business Question</h4>
+        <p>Which agents are underperforming on FCR and SLA compliance? Rank agents within their team and flag outliers for coaching or L&amp;D escalation.</p>
+        <h4 style="margin-top:12px">Concepts Used</h4>
+        <div class="ctx-tags">
+          <span class="ctx-tag">JOIN (multi-table)</span>
+          <span class="ctx-tag">GROUP BY</span>
+          <span class="ctx-tag">CASE WHEN</span>
+          <span class="ctx-tag">DATEADD / GETDATE</span>
+          <span class="ctx-tag">HAVING</span>
+          <span class="ctx-tag">ORDER BY multi-col</span>
+        </div>
+      </div>
+      <div class="sql-outer">
+<pre><span class="cm">-- Agent performance scorecard with action flag</span>
+<span class="cm">-- CASE WHEN converts data into L&D action categories</span>
+
+<span class="kw">SELECT</span>
+    a.team_name,
+    a.agent_name,
+    a.tenure_months,
+    <span class="fn">COUNT</span>(c.contact_id)                       <span class="kw">AS</span> <span class="al">total_handled</span>,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(c.handle_time_sec) / <span class="num">60.0</span>, <span class="num">1</span>)  <span class="kw">AS</span> <span class="al">avg_aht_mins</span>,
+    <span class="fn">ROUND</span>(
+        <span class="fn">SUM</span>(c.resolved_flag) * <span class="num">100.0</span>
+        / <span class="fn">COUNT</span>(c.contact_id), <span class="num">1</span>
+    )                                           <span class="kw">AS</span> <span class="al">fcr_pct</span>,
+    <span class="fn">SUM</span>(c.sla_breach_flag)                    <span class="kw">AS</span> <span class="al">sla_breaches</span>,
+    <span class="fn">ROUND</span>(<span class="fn">SUM</span>(c.sla_breach_cost), <span class="num">2</span>)          <span class="kw">AS</span> <span class="al">breach_cost_r</span>,
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> <span class="fn">SUM</span>(c.resolved_flag) * <span class="num">100.0</span>
+             / <span class="fn">COUNT</span>(c.contact_id) <span class="op">>=</span> <span class="num">85</span>
+        <span class="kw">THEN</span> <span class="str">'On Target'</span>
+        <span class="kw">WHEN</span> <span class="fn">SUM</span>(c.resolved_flag) * <span class="num">100.0</span>
+             / <span class="fn">COUNT</span>(c.contact_id) <span class="op">>=</span> <span class="num">75</span>
+        <span class="kw">THEN</span> <span class="str">'Needs Coaching'</span>
+        <span class="kw">ELSE</span> <span class="str">'Escalate to L&amp;D'</span>
+    <span class="kw">END</span>                                         <span class="kw">AS</span> <span class="al">performance_flag</span>
+
+<span class="kw">FROM</span>  <span class="tbl">contacts</span> c
+<span class="kw">JOIN</span>  <span class="tbl">agents</span>   a <span class="kw">ON</span> c.agent_id <span class="op">=</span> a.agent_id
+<span class="kw">WHERE</span> a.status <span class="op">=</span> <span class="str">'Active'</span>
+  <span class="kw">AND</span> c.contact_date <span class="op">>=</span>
+      <span class="fn">DATEADD</span>(month, <span class="op">-</span><span class="num">3</span>, <span class="fn">GETDATE</span>())
+<span class="kw">GROUP BY</span>
+    a.team_name, a.agent_name, a.tenure_months
+<span class="kw">HAVING</span>  <span class="fn">COUNT</span>(c.contact_id) <span class="op">></span> <span class="num">100</span>
+<span class="kw">ORDER BY</span> a.team_name, fcr_pct <span class="kw">ASC</span>;</pre>
+      </div>
+    </div>
+    <div class="result-wrap">
+      <div class="result-label">Sample Output</div>
+      <table class="result-table">
+        <thead><tr><th>Team</th><th>Agent</th><th>Tenure (mo)</th><th>Handled</th><th>AHT (mins)</th><th>FCR %</th><th>SLA Breaches</th><th>Breach Cost</th><th>Flag</th></tr></thead>
+        <tbody>
+          <tr><td>Team A</td><td class="hi">Agent 04</td><td>3</td><td>412</td><td class="red">11.4</td><td class="red">68.2%</td><td class="red">47</td><td class="red">R1,840</td><td><span class="pill pill-red">Escalate to L&D</span></td></tr>
+          <tr><td>Team A</td><td class="hi">Agent 11</td><td>8</td><td>388</td><td class="amb">9.1</td><td class="amb">74.5%</td><td class="amb">31</td><td class="amb">R980</td><td><span class="pill pill-amb">Needs Coaching</span></td></tr>
+          <tr><td>Team A</td><td class="hi">Agent 07</td><td>18</td><td>524</td><td class="grn">6.2</td><td class="grn">88.3%</td><td class="grn">12</td><td class="grn">R340</td><td><span class="pill pill-grn">On Target</span></td></tr>
+          <tr><td>Team B</td><td class="hi">Agent 02</td><td>5</td><td>366</td><td class="red">10.8</td><td class="red">71.0%</td><td class="red">38</td><td class="red">R1,220</td><td><span class="pill pill-red">Escalate to L&D</span></td></tr>
+          <tr><td>Team B</td><td class="hi">Agent 09</td><td>24</td><td>601</td><td class="grn">5.8</td><td class="grn">91.2%</td><td class="grn">8</td><td class="grn">R180</td><td><span class="pill pill-grn">On Target</span></td></tr>
+        </tbody>
+      </table>
+      <p class="result-note">→ Agent 04 and Agent 02 — both under 8 months tenure — account for R3,060 in breach costs. Tenure correlation suggests an onboarding gap, not a performance issue.</p>
+    </div>
+    <div class="insight">
+      <p><strong>BA Insight:</strong> The <strong>CASE WHEN performance flag</strong> converts raw data into an action category — directly usable by Team Leaders and L&amp;D without further interpretation. This is what separates a BA's SQL from a developer's SQL: the output is designed for a decision.</p>
+    </div>
+  </div>
+
+  <!-- QUERY 4 -->
+  <div class="query-block">
+    <div class="query-header">
+      <div class="query-header-left">
+        <span class="query-num">Q4</span>
+        <span class="query-title">Hourly Contact Volume Heatmap (Peak Period Analysis)</span>
+      </div>
+      <span class="query-badge qb-advanced">Advanced</span>
+    </div>
+    <div class="query-body">
+      <div class="query-context">
+        <h4>Business Question</h4>
+        <p>At what hours and days do contact volumes peak? This informs staffing models and shift planning to reduce queue breaches caused by under-resourcing during high-demand windows.</p>
+        <h4 style="margin-top:12px">Concepts Used</h4>
+        <div class="ctx-tags">
+          <span class="ctx-tag">DATEPART()</span>
+          <span class="ctx-tag">PIVOT via CASE WHEN</span>
+          <span class="ctx-tag">GROUP BY multi-col</span>
+          <span class="ctx-tag">SUM / COUNT</span>
+          <span class="ctx-tag">ORDER BY</span>
+        </div>
+      </div>
+      <div class="sql-outer">
+<pre><span class="cm">-- Hourly volume pivoted by day of week</span>
+<span class="cm">-- Informs workforce management and shift planning</span>
+
+<span class="kw">SELECT</span>
+    <span class="fn">DATEPART</span>(hour, contact_date)   <span class="kw">AS</span> <span class="al">hour_of_day</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span>
+        <span class="fn">DATEPART</span>(weekday, contact_date)
+        <span class="op">=</span> <span class="num">2</span> <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>)          <span class="kw">AS</span> <span class="al">monday</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span>
+        <span class="fn">DATEPART</span>(weekday, contact_date)
+        <span class="op">=</span> <span class="num">3</span> <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>)          <span class="kw">AS</span> <span class="al">tuesday</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span>
+        <span class="fn">DATEPART</span>(weekday, contact_date)
+        <span class="op">=</span> <span class="num">4</span> <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>)          <span class="kw">AS</span> <span class="al">wednesday</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span>
+        <span class="fn">DATEPART</span>(weekday, contact_date)
+        <span class="op">=</span> <span class="num">5</span> <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>)          <span class="kw">AS</span> <span class="al">thursday</span>,
+    <span class="fn">SUM</span>(<span class="kw">CASE WHEN</span>
+        <span class="fn">DATEPART</span>(weekday, contact_date)
+        <span class="op">=</span> <span class="num">6</span> <span class="kw">THEN</span> <span class="num">1</span> <span class="kw">ELSE</span> <span class="num">0</span> <span class="kw">END</span>)          <span class="kw">AS</span> <span class="al">friday</span>
+
+<span class="kw">FROM</span>  <span class="tbl">contacts</span>
+<span class="kw">WHERE</span> contact_date <span class="op">>=</span>
+      <span class="fn">DATEADD</span>(month, <span class="op">-</span><span class="num">1</span>, <span class="fn">GETDATE</span>())
+<span class="kw">GROUP BY</span> <span class="fn">DATEPART</span>(hour, contact_date)
+<span class="kw">ORDER BY</span> hour_of_day;</pre>
+      </div>
+    </div>
+    <div class="result-wrap">
+      <div class="result-label">Sample Output — Last 30 Days</div>
+      <table class="result-table">
+        <thead><tr><th>Hour</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+        <tbody>
+          <tr><td class="hi">08:00</td><td>84</td><td>91</td><td>78</td><td>88</td><td>72</td></tr>
+          <tr><td class="hi">09:00</td><td class="red">214</td><td class="red">198</td><td class="amb">176</td><td class="amb">182</td><td>141</td></tr>
+          <tr><td class="hi">10:00</td><td class="amb">188</td><td class="amb">172</td><td class="amb">165</td><td class="amb">170</td><td>138</td></tr>
+          <tr><td class="hi">14:00</td><td>128</td><td class="amb">161</td><td>144</td><td class="amb">158</td><td class="red">201</td></tr>
+          <tr><td class="hi">15:00</td><td>118</td><td>144</td><td>138</td><td>141</td><td class="red">224</td></tr>
+        </tbody>
+      </table>
+      <p class="result-note">→ Monday 09:00 (214) and Friday 15:00 (224) are peak hours — staffing model should prioritise coverage in these windows to reduce queue-driven SLA breaches.</p>
+    </div>
+    <div class="insight">
+      <p><strong>BA Insight:</strong> PIVOT via CASE WHEN restructures row data into a column-based heatmap without needing a PIVOT clause — making it compatible across SQL dialects. The output goes directly into the workforce planning spreadsheet with zero reformatting.</p>
+    </div>
+  </div>
+
+  <!-- QUERY 5 -->
+  <div class="query-block">
+    <div class="query-header">
+      <div class="query-header-left">
+        <span class="query-num">Q5</span>
+        <span class="query-title">Month-on-Month SLA Breach Cost Trend (Window Function)</span>
+      </div>
+      <span class="query-badge qb-expert">Expert</span>
+    </div>
+    <div class="query-body">
+      <div class="query-context">
+        <h4>Business Question</h4>
+        <p>How is total SLA breach cost trending month-on-month per team? Leadership needs the running total AND the month-on-month change to evaluate whether interventions are working.</p>
+        <h4 style="margin-top:12px">Concepts Used</h4>
+        <div class="ctx-tags">
+          <span class="ctx-tag">CTE</span>
+          <span class="ctx-tag">LAG()</span>
+          <span class="ctx-tag">SUM() OVER</span>
+          <span class="ctx-tag">PARTITION BY</span>
+          <span class="ctx-tag">ROWS BETWEEN</span>
+          <span class="ctx-tag">Window Functions</span>
+        </div>
+      </div>
+      <div class="sql-outer">
+<pre><span class="cm">-- MoM breach cost with running total per team</span>
+<span class="cm">-- LAG() compares this month to last month</span>
+
+<span class="kw">WITH</span> <span class="tbl">monthly_breach</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        a.team_name,
+        <span class="fn">FORMAT</span>(c.contact_date,
+               <span class="str">'yyyy-MM'</span>)              <span class="kw">AS</span> <span class="al">month</span>,
+        <span class="fn">ROUND</span>(<span class="fn">SUM</span>(c.sla_breach_cost),
+              <span class="num">2</span>)                         <span class="kw">AS</span> <span class="al">breach_cost</span>,
+        <span class="fn">SUM</span>(c.sla_breach_flag)          <span class="kw">AS</span> <span class="al">breach_count</span>
+    <span class="kw">FROM</span>  <span class="tbl">contacts</span> c
+    <span class="kw">JOIN</span>  <span class="tbl">agents</span>   a
+          <span class="kw">ON</span> c.agent_id <span class="op">=</span> a.agent_id
+    <span class="kw">GROUP BY</span>
+        a.team_name,
+        <span class="fn">FORMAT</span>(c.contact_date, <span class="str">'yyyy-MM'</span>)
+)
+<span class="kw">SELECT</span>
+    team_name,
+    month,
+    breach_cost,
+    breach_count,
+    <span class="fn">LAG</span>(breach_cost) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> team_name
+        <span class="kw">ORDER BY</span> month
+    )                               <span class="kw">AS</span> <span class="al">prev_month_cost</span>,
+    <span class="fn">ROUND</span>(breach_cost <span class="op">-</span>
+        <span class="fn">LAG</span>(breach_cost) <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> team_name
+            <span class="kw">ORDER BY</span> month), <span class="num">2</span>)    <span class="kw">AS</span> <span class="al">mom_change_r</span>,
+    <span class="fn">ROUND</span>(<span class="fn">SUM</span>(breach_cost) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> team_name
+        <span class="kw">ORDER BY</span> month
+        <span class="kw">ROWS BETWEEN UNBOUNDED</span>
+        <span class="kw">PRECEDING AND CURRENT ROW</span>),
+        <span class="num">2</span>)                          <span class="kw">AS</span> <span class="al">running_total_r</span>
+
+<span class="kw">FROM</span>  <span class="tbl">monthly_breach</span>
+<span class="kw">ORDER BY</span> team_name, month;</pre>
+      </div>
+    </div>
+    <div class="result-wrap">
+      <div class="result-label">Sample Output</div>
+      <table class="result-table">
+        <thead><tr><th>Team</th><th>Month</th><th>Breach Cost</th><th>Count</th><th>Prev Month</th><th>MoM Change</th><th>Running Total</th></tr></thead>
+        <tbody>
+          <tr><td>Team A</td><td>2025-01</td><td>R 1,240</td><td>28</td><td>—</td><td>—</td><td class="blu">R 1,240</td></tr>
+          <tr><td>Team A</td><td>2025-02</td><td>R 1,890</td><td>41</td><td>R 1,240</td><td class="red">▲ R 650</td><td class="blu">R 3,130</td></tr>
+          <tr><td>Team A</td><td>2025-03</td><td>R 4,210</td><td>87</td><td>R 1,890</td><td class="red">▲ R 2,320</td><td class="red">R 7,340</td></tr>
+          <tr><td>Team A</td><td>2025-04</td><td>R 2,980</td><td>62</td><td>R 4,210</td><td class="grn">▼ R 1,230</td><td class="amb">R 10,320</td></tr>
+          <tr><td>Team B</td><td>2025-03</td><td>R 3,640</td><td>74</td><td>R 1,420</td><td class="red">▲ R 2,220</td><td class="red">R 5,950</td></tr>
+        </tbody>
+      </table>
+      <p class="result-note">→ Both teams spike in March. Team A has accumulated R10,320 YTD — flagged for board-level reporting. April shows the first month-on-month improvement, validating the intervention.</p>
+    </div>
+    <div class="insight">
+      <p><strong>BA Insight:</strong> <strong>LAG()</strong> and <strong>SUM() OVER</strong> are window functions — they calculate across rows without collapsing the dataset. The output answers not just "what happened this month" but "is it getting better or worse?" — which is the question leadership actually asks.</p>
+    </div>
+  </div>
+
+  <!-- QUERY 6 -->
+  <div class="query-block">
+    <div class="query-header">
+      <div class="query-header-left">
+        <span class="query-num">Q6</span>
+        <span class="query-title">Customer Segment × Contact Reason Matrix (Failure Demand Segmentation)</span>
+      </div>
+      <span class="query-badge qb-expert">Expert</span>
+    </div>
+    <div class="query-body">
+      <div class="query-context">
+        <h4>Business Question</h4>
+        <p>Which customer segments generate the most repeat contacts per reason code? This enables targeted fixes — if "Payment Query" repeats are concentrated in SME, the fix is segment-specific, not a blanket change.</p>
+        <h4 style="margin-top:12px">Concepts Used</h4>
+        <div class="ctx-tags">
+          <span class="ctx-tag">Chained CTEs</span>
+          <span class="ctx-tag">WHERE EXISTS</span>
+          <span class="ctx-tag">RANK() OVER</span>
+          <span class="ctx-tag">PARTITION BY</span>
+          <span class="ctx-tag">3-table JOIN</span>
+          <span class="ctx-tag">Correlated Subquery</span>
+        </div>
+      </div>
+      <div class="sql-outer">
+<pre><span class="cm">-- Failure demand by customer segment + reason</span>
+<span class="cm">-- WHERE EXISTS isolates repeat contacts efficiently</span>
+
+<span class="kw">WITH</span> <span class="tbl">repeat_contacts</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        c1.contact_id,
+        c1.customer_id,
+        c1.contact_reason,
+        c1.contact_date
+    <span class="kw">FROM</span>  <span class="tbl">contacts</span> c1
+    <span class="kw">WHERE EXISTS</span> (
+        <span class="kw">SELECT</span> <span class="num">1</span>
+        <span class="kw">FROM</span>   <span class="tbl">contacts</span> c2
+        <span class="kw">WHERE</span>  c2.customer_id <span class="op">=</span> c1.customer_id
+          <span class="kw">AND</span>  c2.contact_id  <span class="op">!=</span> c1.contact_id
+          <span class="kw">AND</span>  <span class="fn">DATEDIFF</span>(day,
+                   c1.contact_date,
+                   c2.contact_date)
+               <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">7</span>
+    )
+),
+<span class="tbl">segment_matrix</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        cu.segment,
+        rc.contact_reason,
+        <span class="fn">COUNT</span>(rc.contact_id)     <span class="kw">AS</span> <span class="al">repeat_count</span>,
+        <span class="fn">RANK</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> cu.segment
+            <span class="kw">ORDER BY</span>
+            <span class="fn">COUNT</span>(rc.contact_id) <span class="kw">DESC</span>
+        )                        <span class="kw">AS</span> <span class="al">rank_in_segment</span>
+    <span class="kw">FROM</span>  <span class="tbl">repeat_contacts</span> rc
+    <span class="kw">JOIN</span>  <span class="tbl">customers</span>       cu
+          <span class="kw">ON</span> rc.customer_id <span class="op">=</span> cu.customer_id
+    <span class="kw">GROUP BY</span> cu.segment, rc.contact_reason
+)
+<span class="kw">SELECT</span>
+    segment,
+    contact_reason,
+    repeat_count,
+    rank_in_segment
+<span class="kw">FROM</span>  <span class="tbl">segment_matrix</span>
+<span class="kw">WHERE</span> rank_in_segment <span class="op"><=</span> <span class="num">3</span>
+<span class="kw">ORDER BY</span> segment, rank_in_segment;</pre>
+      </div>
+    </div>
+    <div class="result-wrap">
+      <div class="result-label">Sample Output — Top 3 Repeat Reasons per Segment</div>
+      <table class="result-table">
+        <thead><tr><th>Segment</th><th>Contact Reason</th><th>Repeat Count</th><th>Rank</th></tr></thead>
+        <tbody>
+          <tr><td class="hi">Corporate</td><td>Policy Amendment</td><td class="red">148</td><td><span class="pill pill-red">#1</span></td></tr>
+          <tr><td class="hi">Corporate</td><td>Payment Query</td><td class="amb">112</td><td><span class="pill pill-amb">#2</span></td></tr>
+          <tr><td class="hi">Corporate</td><td>Document Request</td><td>84</td><td><span class="pill pill-grn">#3</span></td></tr>
+          <tr><td class="hi">SME</td><td>Payment Query</td><td class="red">201</td><td><span class="pill pill-red">#1</span></td></tr>
+          <tr><td class="hi">SME</td><td>Account Update</td><td class="amb">134</td><td><span class="pill pill-amb">#2</span></td></tr>
+          <tr><td class="hi">SME</td><td>New Onboarding Query</td><td>98</td><td><span class="pill pill-grn">#3</span></td></tr>
+          <tr><td class="hi">Retail</td><td>Payment Query</td><td class="red">178</td><td><span class="pill pill-red">#1</span></td></tr>
+          <tr><td class="hi">Retail</td><td>Document Request</td><td class="amb">142</td><td><span class="pill pill-amb">#2</span></td></tr>
+          <tr><td class="hi">Retail</td><td>General Enquiry</td><td>91</td><td><span class="pill pill-grn">#3</span></td></tr>
+        </tbody>
+      </table>
+      <p class="result-note">→ "Payment Query" is the #1 repeat driver for SME and Retail — but "Policy Amendment" is the top issue for Corporate only. Fix Payment Query for SME/Retail first; separate intervention for Corporate.</p>
+    </div>
+    <div class="insight">
+      <p><strong>BA Insight:</strong> Two chained CTEs — the first isolates repeat contacts using a <strong>correlated subquery (WHERE EXISTS)</strong>, the second segments and ranks them using <strong>RANK() OVER PARTITION BY</strong>. The recommendation becomes precise: don't fix Payment Query for everyone — fix it for SME and Retail specifically. That precision is the Senior BA's value-add.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>SQL Case Study · Contact Centre Analytics · Senior BA Portfolio</span>
+  <span>All schemas and data are original constructs for portfolio demonstration</span>
+  <span>Developed by Siyethaba Zulu</span>
+</div>
+
+</body>
+</html>

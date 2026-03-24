@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Centre | Operational Performance Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy:    #0f172a;
+    --navy2:   #1e293b;
+    --navy3:   #334155;
+    --blue:    #1d4ed8;
+    --blue2:   #2563eb;
+    --blue3:   #dbeafe;
+    --blue4:   #eff6ff;
+    --red:     #dc2626;
+    --red2:    #fee2e2;
+    --red3:    #fef2f2;
+    --green:   #16a34a;
+    --green2:  #dcfce7;
+    --green3:  #f0fdf4;
+    --amber:   #b45309;
+    --amber2:  #fef3c7;
+    --amber3:  #fffbeb;
+    --purple:  #6d28d9;
+    --purple2: #ede9fe;
+    --teal:    #0f766e;
+    --teal2:   #ccfbf1;
+    --bg:      #ffffff;
+    --bg2:     #f8fafc;
+    --bg3:     #f1f5f9;
+    --border:  #e2e8f0;
+    --border2: #cbd5e1;
+    --text:    #0f172a;
+    --text2:   #1e293b;
+    --text3:   #334155;
+    --muted:   #475569;
+    --muted2:  #64748b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); font-family:'Segoe UI',sans-serif; color:var(--text); }
+
+  /* TOPBAR */
+  .topbar {
+    background:var(--navy);
+    border-bottom:3px solid var(--blue2);
+    padding:14px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .topbar-left { display:flex; align-items:center; gap:14px; }
+  .logo {
+    width:38px; height:38px; border-radius:6px;
+    background:var(--blue2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:900; color:#fff; letter-spacing:.5px;
+  }
+  .t-title { font-size:17px; font-weight:700; color:#fff; letter-spacing:.3px; }
+  .t-sub   { font-size:11px; color:#94a3b8; margin-top:2px; }
+  .badges  { display:flex; gap:8px; align-items:center; }
+  .badge   { font-size:10px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; padding:3px 10px; border-radius:3px; }
+  .b-light { background:rgba(255,255,255,.12); color:#e2e8f0; border:1px solid rgba(255,255,255,.2); }
+  .b-blue  { background:var(--blue2); color:#fff; }
+  .b-green { background:#16a34a; color:#fff; }
+  .t-date  { font-size:11px; color:#94a3b8; }
+
+  /* DISCLAIMER */
+  .disc {
+    background:var(--amber3); border-bottom:1px solid #fde68a;
+    padding:7px 28px; font-size:10px; color:var(--amber);
+    font-weight:500;
+  }
+  .disc strong { color:var(--navy); }
+
+  /* MAIN */
+  .main { padding:22px 28px; }
+
+  /* SECTION DIVIDER */
+  .sdiv { display:flex; align-items:center; gap:10px; margin:4px 0 16px; }
+  .sdiv span {
+    font-size:10px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; color:var(--muted2); white-space:nowrap;
+  }
+  .sdiv::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* KPI ROW */
+  .kpi-row { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:20px; }
+  .kpi {
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:8px; padding:16px 18px;
+    position:relative; overflow:hidden;
+    box-shadow:0 1px 4px rgba(15,23,42,.06);
+  }
+  .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .kpi.blue::before   { background:var(--blue2); }
+  .kpi.red::before    { background:var(--red); }
+  .kpi.amber::before  { background:var(--amber); }
+  .kpi.green::before  { background:var(--green); }
+  .kpi.purple::before { background:var(--purple); }
+  .kpi-lbl { font-size:10px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--muted2); margin-bottom:10px; }
+  .kpi-val { font-size:30px; font-weight:800; line-height:1; margin-bottom:6px; color:var(--navy); }
+  .kpi-sub { font-size:10px; color:var(--muted2); }
+  .kpi-bar {
+    position:absolute; bottom:0; left:0; right:0; height:3px;
+  }
+
+  /* GRIDS */
+  .g3  { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:14px; margin-bottom:14px; }
+  .g3b { display:grid; grid-template-columns:1fr 1fr 1.3fr; gap:14px; margin-bottom:14px; }
+
+  /* CARD */
+  .card {
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:8px; padding:18px 20px;
+    box-shadow:0 1px 4px rgba(15,23,42,.06);
+  }
+  .card-title {
+    font-size:11px; font-weight:700; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--navy2);
+    margin-bottom:3px; display:flex; justify-content:space-between; align-items:center;
+  }
+  .card-sub { font-size:10px; color:var(--muted2); margin-bottom:16px; }
+  .chart-wrap { position:relative; width:100%; }
+
+  /* BAR TRACKS */
+  .bar-track { height:6px; background:var(--bg3); border-radius:3px; overflow:hidden; margin-top:4px; }
+  .bar-fill  { height:100%; border-radius:3px; }
+  .impact-list { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+  .impact-item { display:flex; flex-direction:column; gap:4px; }
+  .impact-header { display:flex; justify-content:space-between; align-items:center; }
+  .impact-label { font-size:11px; color:var(--text3); font-weight:500; }
+  .impact-count { font-size:12px; font-weight:700; }
+
+  /* TABLE */
+  .table-wrap { overflow-x:auto; margin-top:8px; }
+  table { width:100%; border-collapse:collapse; font-size:11px; }
+  thead tr { background:var(--bg3); border-bottom:2px solid var(--border2); }
+  th { text-align:left; padding:8px 10px; font-size:9px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--muted2); white-space:nowrap; }
+  tbody tr { border-bottom:1px solid var(--border); }
+  tbody tr:hover { background:var(--bg2); }
+  td { padding:9px 10px; color:var(--text3); line-height:1.4; }
+  td.val { font-size:13px; font-weight:700; color:var(--navy); }
+  .pill { display:inline-block; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:700; }
+  .pill-open   { background:var(--red2);    color:var(--red);    border:1px solid #fecaca; }
+  .pill-accept { background:var(--green2);  color:var(--green);  border:1px solid #bbf7d0; }
+  .pill-eff    { background:var(--amber2);  color:var(--amber);  border:1px solid #fde68a; }
+  .pill-people { background:var(--purple2); color:var(--purple); border:1px solid #ddd6fe; }
+  .pill-proc   { background:var(--blue3);   color:var(--blue2);  border:1px solid #bfdbfe; }
+
+  /* INSIGHT PANEL */
+  .insight {
+    background:var(--blue4); border:1px solid #bfdbfe;
+    border-radius:8px; padding:18px 20px; margin-bottom:14px;
+  }
+  .insight-title {
+    font-size:11px; font-weight:700; letter-spacing:.8px;
+    text-transform:uppercase; color:var(--blue2); margin-bottom:12px;
+  }
+  .insight-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; font-size:11px; line-height:1.7; color:var(--text3); }
+  .insight-grid h4 { font-size:10px; font-weight:700; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px; }
+
+  /* FOOTER */
+  .footer {
+    background:var(--navy); padding:14px 28px;
+    display:flex; justify-content:space-between;
+    font-size:10px; color:#64748b;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">SZ</div>
+    <div>
+      <div class="t-title">Contact Centre · Operational Performance Dashboard</div>
+      <div class="t-sub">SLA Breach Analysis · Issues Register · Quality Execution Monitor · Q1/Q2 2025</div>
+    </div>
+  </div>
+  <div class="badges">
+    <span class="badge b-light">Q1 - Q2 2025</span>
+    <span class="badge b-light">26 Issues Logged</span>
+    <span class="badge b-green">11 LPI Events</span>
+    <span class="t-date">Last Updated: 30 June 2025</span>
+  </div>
+</div>
+
+<div class="disc">
+  <strong>Portfolio Note:</strong> This dashboard has been independently rebuilt in a contact centre context to demonstrate transferable analytical capability. All data is anonymised. Original available upon request in a controlled setting.
+</div>
+
+<div class="main">
+
+  <div class="kpi-row">
+    <div class="kpi red">
+      <div class="kpi-lbl">Total SLA Breach Cost</div>
+      <div class="kpi-val">R2,097</div>
+      <div class="kpi-sub">Financial impact — Q1 &amp; Q2 2025</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-lbl">Open Breach Events</div>
+      <div class="kpi-val">R1,312</div>
+      <div class="kpi-sub">5 unresolved — active financial exposure</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-lbl">Issues Logged</div>
+      <div class="kpi-val">26</div>
+      <div class="kpi-sub">Across process, people &amp; system</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-lbl">People-Driven Failures</div>
+      <div class="kpi-val">58%</div>
+      <div class="kpi-sub">15 of 26 — training gap root cause</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-lbl">Resolved Breach Cost</div>
+      <div class="kpi-val">R734</div>
+      <div class="kpi-sub">4 events accepted &amp; closed</div>
+    </div>
+  </div>
+
+  <div class="sdiv"><span>Financial Impact Analysis</span></div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-title">SLA Breach Cost by Root Cause Process</div>
+      <div class="card-sub">Quantified financial loss attributed to each operational failure area</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="c1"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Breach Event Resolution Status</div>
+      <div class="card-sub">Resolution progress of all 11 SLA breach events</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="c2"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Financial Loss by Impact Area</div>
+      <div class="card-sub">People vs Process as root cause of financial penalties</div>
+      <div class="chart-wrap" style="height:160px"><canvas id="c3"></canvas></div>
+      <div class="impact-list">
+        <div class="impact-item">
+          <div class="impact-header">
+            <span class="impact-label">People — Agent/Staff Performance</span>
+            <span class="impact-count" style="color:var(--purple)">R1,489 · 71%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--purple)"></div></div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-header">
+            <span class="impact-label">Process — Workflow Failures</span>
+            <span class="impact-count" style="color:var(--blue2)">R608 · 29%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:29%;background:var(--blue2)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">SLA Breach Event Log — Individual Incidents</div>
+    <div class="card-sub">All 11 Late Performance Indicator (LPI) events with financial quantum and root cause classification</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Incident Date</th><th>Status</th><th>Financial Loss</th><th>Root Cause Process</th><th>Impact Area</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>17 Feb 2025</td><td><span class="pill pill-accept">Accepted</span></td><td class="val" style="color:var(--green)">R57.51</td><td>New Account Onboarding</td><td><span class="pill pill-people">People</span></td><td>Admin hierarchy not updated — case remained in incorrect queue</td></tr>
+          <tr><td>01 Jan 2025</td><td><span class="pill pill-accept">Accepted</span></td><td class="val" style="color:var(--green)">R40.68</td><td>Front Office (Agent)</td><td><span class="pill pill-people">People</span></td><td>Late submission by agent — client requested earlier join date</td></tr>
+          <tr><td>05 Mar 2025</td><td><span class="pill pill-accept">Accepted</span></td><td class="val" style="color:var(--amber)">R451.91</td><td>QA / Pre-processing</td><td><span class="pill pill-people">People</span></td><td>Delays in QA vetting due to staff shortage — SLA breached</td></tr>
+          <tr><td>22 May 2025</td><td><span class="pill pill-accept">Accepted</span></td><td class="val" style="color:var(--amber)">R116.48</td><td>Compliance Documentation</td><td><span class="pill pill-proc">Process</span></td><td>Late Payment Interest — delay in registering compliance documentation</td></tr>
+          <tr><td>26 May 2025</td><td><span class="pill pill-accept">Accepted</span></td><td class="val" style="color:var(--green)">R68.16</td><td>Compliance Documentation</td><td><span class="pill pill-proc">Process</span></td><td>Delay in compliance registration and first billing cycle</td></tr>
+          <tr><td>26 Jun 2025</td><td><span class="pill pill-open">Open</span></td><td class="val" style="color:var(--red)">R47.48</td><td>QA / Pre-processing</td><td><span class="pill pill-people">People</span></td><td>Shared liability — QA vetting delayed over 3 weeks post submission</td></tr>
+          <tr><td>26 Jun 2025</td><td><span class="pill pill-open">Open</span></td><td class="val" style="color:var(--red)">R39.47</td><td>QA / Pre-processing</td><td><span class="pill pill-people">People</span></td><td>Case submitted late; QA only actioned 3 weeks after submission</td></tr>
+          <tr><td>26 Jun 2025</td><td><span class="pill pill-eff">Effects Added</span></td><td class="val" style="color:var(--amber)">R50.55</td><td>QA / Pre-processing</td><td><span class="pill pill-people">People</span></td><td>Shared liability — QA delayed; PSOA received 2 weeks post registration</td></tr>
+          <tr><td>26 Jun 2025</td><td><span class="pill pill-open">Open</span></td><td class="val" style="color:var(--red)">R45.68</td><td>QA / Pre-processing</td><td><span class="pill pill-people">People</span></td><td>Case submitted late; QA actioned 3 weeks post submission</td></tr>
+          <tr><td>30 Jun 2025</td><td><span class="pill pill-open">Open</span></td><td class="val" style="color:var(--red)">R755.80</td><td>QA / Pre-processing</td><td><span class="pill pill-people">People</span></td><td>Highest single incident — QA only actioned 1 month after case submission</td></tr>
+          <tr><td>07 Jul 2025</td><td><span class="pill pill-open">Open</span></td><td class="val" style="color:var(--red)">R423.79</td><td>Compliance Documentation</td><td><span class="pill pill-proc">Process</span></td><td>Case approved late — late payment interest incurred on compliance processing</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sdiv"><span>Operational Issues Analysis</span></div>
+
+  <div class="g3b">
+    <div class="card">
+      <div class="card-title">Issues by Root Cause Process</div>
+      <div class="card-sub">Volume of logged issues attributed to each operational process area</div>
+      <div class="chart-wrap" style="height:240px"><canvas id="c4"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Issues by Impact Area</div>
+      <div class="card-sub">Classification of what is failing</div>
+      <div class="chart-wrap" style="height:190px"><canvas id="c5"></canvas></div>
+      <div class="impact-list" style="margin-top:10px">
+        <div class="impact-item">
+          <div class="impact-header"><span class="impact-label">People</span><span class="impact-count" style="color:var(--purple)">15 · 58%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--purple)"></div></div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-header"><span class="impact-label">Process</span><span class="impact-count" style="color:var(--blue2)">9 · 34%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:34%;background:var(--blue2)"></div></div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-header"><span class="impact-label">System</span><span class="impact-count" style="color:var(--teal)">2 · 8%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:8%;background:var(--teal)"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recommended Intervention by Type</div>
+      <div class="card-sub">Remediation action per issue classification</div>
+      <div class="chart-wrap" style="height:190px"><canvas id="c6"></canvas></div>
+      <div style="margin-top:12px;font-size:11px;color:var(--text3);line-height:1.8">
+        <div><strong style="color:var(--purple)">15 issues</strong> — Training &amp; Coaching intervention required</div>
+        <div><strong style="color:var(--blue2)">9 issues</strong> — Workflow Redesign required</div>
+        <div><strong style="color:var(--teal)">2 issues</strong> — Technology / CRM Fix required</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-title">Key Findings and Recommendations</div>
+    <div class="insight-grid">
+      <div>
+        <h4 style="color:var(--red)">Critical Risk</h4>
+        QA / Pre-processing delays account for <strong>R1,391 (66%)</strong> of total SLA breach cost.
+        Five open breach events totalling <strong>R1,312</strong> remain unresolved, representing active and growing financial exposure.
+      </div>
+      <div>
+        <h4 style="color:var(--amber)">Root Cause</h4>
+        <strong>58% of all issues</strong> are people-driven, with training gaps identified as the primary root cause.
+        This pattern repeats across QA, onboarding and front office — indicating a <strong>systemic L&amp;D gap</strong>, not isolated incidents.
+      </div>
+      <div>
+        <h4 style="color:var(--green)">Recommended Actions</h4>
+        Priority 1: Structured coaching programme targeting QA processing SLAs.
+        Priority 2: Process redesign for compliance documentation workflow.
+        Priority 3: CRM enhancement to prevent admin queue misrouting.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div>Contact Centre Operational Performance Dashboard &nbsp;·&nbsp; Q1-Q2 2025</div>
+  <div>Data anonymised in compliance with data privacy obligations &nbsp;·&nbsp; Original available on request</div>
+  <div>Developed by Siyethaba Zulu</div>
+</div>
+
+<script>
+Chart.defaults.color = '#475569';
+Chart.defaults.borderColor = '#e2e8f0';
+Chart.defaults.font.family = 'Segoe UI';
+Chart.defaults.font.size = 11;
+const GRID = { color:'rgba(226,232,240,1)', drawBorder:false };
+
+new Chart(document.getElementById('c1'),{
+  type:'bar',
+  data:{
+    labels:['QA / Pre-processing','Compliance Docs','New Acct Onboarding','Front Office'],
+    datasets:[{ data:[1390.89,608.43,57.51,40.68],
+      backgroundColor:['rgba(220,38,38,.15)','rgba(180,83,9,.15)','rgba(29,78,216,.15)','rgba(109,40,217,.15)'],
+      borderColor:['#dc2626','#b45309','#1d4ed8','#6d28d9'],
+      borderWidth:2, borderRadius:5 }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>` R${c.raw.toFixed(2)}`}} },
+    scales:{ x:{grid:GRID,ticks:{callback:v=>`R${v}`,color:'#475569'}}, y:{grid:{display:false},ticks:{color:'#1e293b',font:{weight:'600'}}} }
+  }
+});
+
+new Chart(document.getElementById('c2'),{
+  type:'doughnut',
+  data:{
+    labels:['Open (Active Exposure)','Accepted &amp; Closed','Effects Added'],
+    datasets:[{ data:[1312.22,734.74,50.55],
+      backgroundColor:['rgba(220,38,38,.12)','rgba(22,163,74,.12)','rgba(180,83,9,.12)'],
+      borderColor:['#dc2626','#16a34a','#b45309'],
+      borderWidth:2, hoverOffset:5 }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'68%',
+    plugins:{ legend:{position:'bottom',labels:{padding:12,boxWidth:10,color:'#475569'}},
+      tooltip:{callbacks:{label:c=>` R${c.raw.toFixed(2)}`}} }
+  }
+});
+
+new Chart(document.getElementById('c3'),{
+  type:'doughnut',
+  data:{
+    labels:['People','Process'],
+    datasets:[{ data:[1489.08,608.43],
+      backgroundColor:['rgba(109,40,217,.12)','rgba(29,78,216,.12)'],
+      borderColor:['#6d28d9','#1d4ed8'], borderWidth:2, hoverOffset:5 }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'65%',
+    plugins:{ legend:{position:'bottom',labels:{padding:10,boxWidth:10,color:'#475569'}},
+      tooltip:{callbacks:{label:c=>` R${c.raw.toFixed(2)}`}} }
+  }
+});
+
+new Chart(document.getElementById('c4'),{
+  type:'bar',
+  data:{
+    labels:['QA / Pre-processing','Consultant Handling','Admin / Back Office','Case Documentation','Billing System','Document Mgmt','Templates'],
+    datasets:[{ data:[7,6,4,3,2,1,1],
+      backgroundColor:['rgba(220,38,38,.12)','rgba(109,40,217,.12)','rgba(180,83,9,.12)','rgba(29,78,216,.12)','rgba(15,118,110,.12)','rgba(22,163,74,.12)','rgba(71,85,105,.1)'],
+      borderColor:['#dc2626','#6d28d9','#b45309','#1d4ed8','#0f766e','#16a34a','#64748b'],
+      borderWidth:2, borderRadius:4 }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{grid:GRID,ticks:{stepSize:1,color:'#475569'}}, y:{grid:{display:false},ticks:{color:'#1e293b',font:{size:10}}} }
+  }
+});
+
+new Chart(document.getElementById('c5'),{
+  type:'doughnut',
+  data:{
+    labels:['People','Process','System'],
+    datasets:[{ data:[15,9,2],
+      backgroundColor:['rgba(109,40,217,.12)','rgba(29,78,216,.12)','rgba(15,118,110,.12)'],
+      borderColor:['#6d28d9','#1d4ed8','#0f766e'], borderWidth:2, hoverOffset:5 }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'60%',
+    plugins:{ legend:{position:'bottom',labels:{padding:10,boxWidth:10,color:'#475569'}} }
+  }
+});
+
+new Chart(document.getElementById('c6'),{
+  type:'bar',
+  data:{
+    labels:['Training &amp; Coaching','Workflow Redesign','Technology Fix'],
+    datasets:[{ data:[15,9,2],
+      backgroundColor:['rgba(109,40,217,.12)','rgba(29,78,216,.12)','rgba(15,118,110,.12)'],
+      borderColor:['#6d28d9','#1d4ed8','#0f766e'], borderWidth:2, borderRadius:4 }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{grid:{display:false},ticks:{color:'#1e293b'}}, y:{grid:GRID,ticks:{stepSize:3,color:'#475569'}} }
+  }
+});
+</script>
+</body>
+</html>

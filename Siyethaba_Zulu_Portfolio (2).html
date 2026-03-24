@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siyethaba Zulu | Senior BA / Insights Analyst</title>
+<style>
+  :root {
+    --navy:    #0f172a;
+    --navy2:   #1e293b;
+    --navy3:   #334155;
+    --blue:    #1d4ed8;
+    --blue2:   #2563eb;
+    --blue3:   #dbeafe;
+    --blue4:   #eff6ff;
+    --red:     #dc2626;
+    --red2:    #fee2e2;
+    --green:   #16a34a;
+    --green2:  #dcfce7;
+    --amber:   #b45309;
+    --amber2:  #fef3c7;
+    --amber3:  #fffbeb;
+    --purple:  #6d28d9;
+    --purple2: #ede9fe;
+    --teal:    #0f766e;
+    --teal2:   #ccfbf1;
+    --bg:      #ffffff;
+    --bg2:     #f8fafc;
+    --bg3:     #f1f5f9;
+    --border:  #e2e8f0;
+    --border2: #cbd5e1;
+    --text:    #0f172a;
+    --text2:   #1e293b;
+    --text3:   #334155;
+    --muted:   #475569;
+    --muted2:  #64748b;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg2);
+    font-family: 'Segoe UI', sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--navy);
+    padding: 60px 48px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue2), var(--teal), var(--blue2));
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: -60px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(37,99,235,.07);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    position: relative; z-index: 1;
+  }
+  .hero-initials {
+    width: 72px; height: 72px;
+    border-radius: 12px;
+    background: var(--blue2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 900;
+    color: #fff; letter-spacing: 1px;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+  .hero-name {
+    font-size: 34px; font-weight: 800;
+    color: #fff; letter-spacing: .3px;
+    margin-bottom: 6px;
+  }
+  .hero-title {
+    font-size: 15px; font-weight: 600;
+    color: #93c5fd;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero-bio {
+    font-size: 13px;
+    color: #94a3b8;
+    max-width: 640px;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+  .hero-bio strong { color: #e2e8f0; }
+
+  /* CONTACT LINKS */
+  .contact-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .contact-link {
+    display: flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 11px; font-weight: 600;
+    color: #cbd5e1;
+    text-decoration: none;
+    letter-spacing: .3px;
+    transition: all .2s;
+  }
+  .contact-link:hover {
+    background: rgba(255,255,255,.13);
+    color: #fff;
+    border-color: rgba(255,255,255,.25);
+  }
+  .contact-icon { font-size: 13px; }
+
+  /* SKILLS TAGS */
+  .skill-tags {
+    display: flex; flex-direction: column;
+    gap: 10px; align-items: flex-end;
+  }
+  .skill-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .skill-group-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #475569;
+    margin-bottom: 4px; text-align: right;
+  }
+  .skill-tag {
+    font-size: 10px; font-weight: 600;
+    padding: 3px 10px; border-radius: 4px;
+    letter-spacing: .3px;
+  }
+  .st-blue   { background: rgba(37,99,235,.2);  color: #93c5fd; border: 1px solid rgba(37,99,235,.3); }
+  .st-green  { background: rgba(22,163,74,.2);  color: #86efac; border: 1px solid rgba(22,163,74,.3); }
+  .st-purple { background: rgba(109,40,217,.2); color: #c4b5fd; border: 1px solid rgba(109,40,217,.3); }
+  .st-teal   { background: rgba(15,118,110,.2); color: #5eead4; border: 1px solid rgba(15,118,110,.3); }
+  .st-amber  { background: rgba(180,83,9,.2);   color: #fcd34d; border: 1px solid rgba(180,83,9,.3); }
+
+  /* ── METRICS STRIP ── */
+  .metrics {
+    background: var(--blue2);
+    padding: 18px 48px;
+  }
+  .metrics-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(5,1fr);
+    gap: 0;
+  }
+  .metric {
+    text-align: center;
+    padding: 4px 0;
+    border-right: 1px solid rgba(255,255,255,.2);
+  }
+  .metric:last-child { border-right: none; }
+  .metric-val {
+    font-size: 24px; font-weight: 800;
+    color: #fff; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-lbl {
+    font-size: 10px; font-weight: 500;
+    color: rgba(255,255,255,.7);
+    letter-spacing: .5px;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 36px 48px;
+  }
+
+  /* SECTION HEADER */
+  .section-head {
+    display: flex; align-items: center;
+    gap: 12px; margin-bottom: 22px;
+  }
+  .section-num {
+    width: 28px; height: 28px;
+    border-radius: 6px; background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: #fff;
+  }
+  .section-title {
+    font-size: 13px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--navy);
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── PILLAR 1: CASE STUDIES ── */
+  .case-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 18px;
+    margin-bottom: 40px;
+  }
+  .case-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(15,23,42,.06);
+    display: flex; flex-direction: column;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .case-card:hover {
+    box-shadow: 0 8px 24px rgba(15,23,42,.1);
+    transform: translateY(-2px);
+  }
+  .case-header {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .case-tag {
+    display: inline-block;
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 3px;
+    margin-bottom: 10px;
+  }
+  .tag-blue   { background: var(--blue3);  color: var(--blue2);  border: 1px solid #bfdbfe; }
+  .tag-green  { background: var(--green2); color: var(--green);  border: 1px solid #bbf7d0; }
+  .tag-purple { background: var(--purple2);color: var(--purple); border: 1px solid #ddd6fe; }
+  .tag-teal   { background: var(--teal2);  color: var(--teal);   border: 1px solid #a7f3d0; }
+  .tag-amber  { background: var(--amber2); color: var(--amber);  border: 1px solid #fde68a; }
+  .tag-navy   { background: var(--bg3);    color: var(--navy2);  border: 1px solid var(--border2); }
+
+  .case-title {
+    font-size: 14px; font-weight: 700;
+    color: var(--navy); margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .case-org {
+    font-size: 10px; color: var(--muted2);
+    font-weight: 500; letter-spacing: .3px;
+  }
+  .case-body { padding: 16px 20px; flex: 1; }
+  .par-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--muted2);
+    margin-bottom: 4px; margin-top: 10px;
+  }
+  .par-label:first-child { margin-top: 0; }
+  .par-text {
+    font-size: 11px; color: var(--text3); line-height: 1.7;
+  }
+  .par-text strong { color: var(--navy); }
+  .case-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .artifact-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+  .a-tag {
+    font-size: 9px; font-weight: 600;
+    background: var(--bg3); color: var(--navy3);
+    border: 1px solid var(--border2);
+    padding: 2px 7px; border-radius: 3px;
+  }
+  .view-btn {
+    font-size: 10px; font-weight: 700;
+    color: var(--blue2); text-decoration: none;
+    letter-spacing: .3px;
+    border: 1px solid var(--blue3);
+    background: var(--blue4);
+    padding: 4px 10px; border-radius: 4px;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .view-btn:hover { background: var(--blue3); }
+
+  /* ── PILLAR 2: METRICS ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .metric-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: 0 1px 4px rgba(15,23,42,.06);
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .metric-icon {
+    width: 42px; height: 42px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0; font-weight: 900;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  .mi-red    { background: var(--red2);    color: var(--red); }
+  .mi-blue   { background: var(--blue3);   color: var(--blue2); }
+  .mi-green  { background: var(--green2);  color: var(--green); }
+  .mi-purple { background: var(--purple2); color: var(--purple); }
+  .mi-amber  { background: var(--amber2);  color: var(--amber); }
+  .mi-teal   { background: var(--teal2);   color: var(--teal); }
+  .metric-content {}
+  .metric-big {
+    font-size: 26px; font-weight: 800;
+    color: var(--navy); line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-desc {
+    font-size: 11px; color: var(--text3);
+    line-height: 1.5;
+  }
+  .metric-context {
+    font-size: 10px; color: var(--muted2);
+    margin-top: 3px;
+  }
+
+  /* ── PILLAR 3: ARTIFACTS ── */
+  .artifact-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .artifact-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 4px rgba(15,23,42,.06);
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .art-icon {
+    width: 44px; height: 44px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 900;
+    flex-shrink: 0; letter-spacing: .5px;
+  }
+  .ai-pbi    { background: #FFF0E6; color: #F2711C; border: 1px solid #FDCBA8; }
+  .ai-html   { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+  .ai-sql    { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+  .ai-vis    { background: #F5F3FF; color: #6D28D9; border: 1px solid #DDD6FE; }
+  .art-content { flex: 1; }
+  .art-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--navy); margin-bottom: 4px;
+  }
+  .art-desc {
+    font-size: 11px; color: var(--text3);
+    line-height: 1.6; margin-bottom: 10px;
+  }
+  .art-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .art-tools { display: flex; gap: 5px; }
+  .art-tool {
+    font-size: 9px; font-weight: 600;
+    background: var(--bg3); color: var(--navy3);
+    border: 1px solid var(--border2);
+    padding: 2px 7px; border-radius: 3px;
+  }
+  .redacted-note {
+    font-size: 9px; color: var(--muted2);
+    font-style: italic;
+  }
+
+  /* ── PILLAR 4: ACHIEVEMENTS ── */
+  .achieve-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .achieve-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 4px rgba(15,23,42,.06);
+  }
+  .achieve-head {
+    display: flex; align-items: center;
+    gap: 10px; margin-bottom: 12px;
+  }
+  .achieve-icon {
+    width: 36px; height: 36px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 900; flex-shrink: 0;
+  }
+  .achieve-title {
+    font-size: 13px; font-weight: 700; color: var(--navy);
+  }
+  .achieve-sub {
+    font-size: 10px; color: var(--muted2); margin-top: 1px;
+  }
+  .cert-list { display: flex; flex-direction: column; gap: 8px; }
+  .cert-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; background: var(--bg2);
+    border: 1px solid var(--border); border-radius: 6px;
+  }
+  .cert-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cert-name { font-size: 11px; font-weight: 600; color: var(--navy2); flex: 1; }
+  .cert-year { font-size: 10px; color: var(--muted2); }
+  .testimonial-text {
+    font-size: 12px; color: var(--text3);
+    line-height: 1.8; font-style: italic;
+    border-left: 3px solid var(--blue2);
+    padding-left: 14px; margin-bottom: 10px;
+  }
+  .testimonial-author {
+    font-size: 11px; font-weight: 600; color: var(--navy2);
+  }
+  .testimonial-role { font-size: 10px; color: var(--muted2); }
+
+  /* ── PRIVACY FOOTER ── */
+  .privacy {
+    background: var(--amber3);
+    border-top: 1px solid #fde68a;
+    padding: 14px 48px;
+    max-width: 100%;
+  }
+  .privacy-inner {
+    max-width: 1100px; margin: 0 auto;
+    font-size: 11px; color: var(--amber);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .privacy-inner strong { color: var(--navy); }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--navy);
+    padding: 18px 48px;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; justify-content: space-between;
+    align-items: center; font-size: 11px; color: #64748b;
+  }
+  .footer-name { font-size: 13px; font-weight: 700; color: #e2e8f0; }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { color: #64748b; text-decoration: none; font-size: 11px; }
+  .footer-links a:hover { color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-initials">SZ</div>
+      <div class="hero-name">Siyethaba Zulu</div>
+      <div class="hero-title">Senior Business Analyst / Insights Analyst</div>
+      <div class="hero-bio">
+        A results-driven Senior BA with a track record of <strong>self-initiating analysis where none existed</strong> —
+        identifying business gaps, designing solutions, and delivering measurable outcomes.
+        Grounded in <strong>financial services and insurance</strong>, with demonstrated ability to translate
+        complex operational data into executive-level insights. Portfolio artifacts showcase
+        the direct applicability of these skills to <strong>contact centre and service-driven environments</strong>.
+        All work was independently conceived, built, and delivered.
+      </div>
+      <div class="contact-row">
+        <a class="contact-link" href="mailto:siyethaba.zulu@liberty.co.za">
+          <span class="contact-icon">✉</span> siyethaba.zulu@liberty.co.za
+        </a>
+        <a class="contact-link" href="tel:+27000000000">
+          <span class="contact-icon">T</span> +27 73 681 7922
+        </a>
+        <a class="contact-link" href="https://linkedin.com/in/siyethaba-zulu-2571731a0" target="_blank">
+          <span class="contact-icon">in</span> Siyethaba Zulu
+        </a>
+        <a class="contact-link" href="https://github.com/siyethabaz" target="_blank">
+          <span class="contact-icon">GH</span> siyethabaz
+        </a>
+      </div>
+    </div>
+    <div class="skill-tags">
+      <div>
+        <div class="skill-group-label">Analytics & BI</div>
+        <div class="skill-group">
+          <span class="skill-tag st-blue">Power BI</span>
+          <span class="skill-tag st-blue">SQL</span>
+          <span class="skill-tag st-blue">Excel</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">BA Disciplines</div>
+        <div class="skill-group">
+          <span class="skill-tag st-green">Process Mapping</span>
+          <span class="skill-tag st-green">Root Cause Analysis</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Methodology</div>
+        <div class="skill-group">
+          <span class="skill-tag st-purple">Agile</span>
+          <span class="skill-tag st-purple">Requirements Elicitation</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-label">Domains</div>
+        <div class="skill-group">
+          <span class="skill-tag st-amber">Financial Services</span>
+          <span class="skill-tag st-amber">Insurance</span>
+          <span class="skill-tag st-teal">Contact Centre</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- METRICS STRIP -->
+<div class="metrics">
+  <div class="metrics-inner">
+    <div class="metric">
+      <div class="metric-val">R2,097</div>
+      <div class="metric-lbl">SLA Breach Costs Quantified</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">26</div>
+      <div class="metric-lbl">Operational Issues Tracked</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">195</div>
+      <div class="metric-lbl">Cases Analysed (Q2-Q4)</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">96%</div>
+      <div class="metric-lbl">Q4 SLA Compliance Achieved</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val">5+</div>
+      <div class="metric-lbl">Processes Designed from Zero</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- PILLAR 1: CASE STUDIES -->
+  <div class="section-head">
+    <div class="section-num">1</div>
+    <div class="section-title">Tangible Case Studies</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="case-grid">
+
+    <!-- Case Study 1 -->
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-tag tag-blue">Contact Centre Operations</div>
+        <div class="case-title">SLA Breach Quantification &amp; Operational Issues Register</div>
+        <div class="case-org">Independently designed and delivered</div>
+      </div>
+      <div class="case-body">
+        <div class="par-label">The Problem</div>
+        <div class="par-text">No centralised visibility of operational failures, their root causes, or their financial cost. Leadership could not differentiate between systemic issues and isolated incidents.</div>
+        <div class="par-label">The Action</div>
+        <div class="par-text">Designed an Issues Register from scratch — capturing system, process, and training failures. Built an LPI dashboard quantifying the <strong>monetary cost of poor execution</strong> per incident, bucketed by impact area and proposed remedy.</div>
+        <div class="par-label">The Result</div>
+        <div class="par-text"><strong>R2,097 in SLA breach costs</strong> identified and visualised. 58% of failures traced to people/training gaps — enabling targeted L&amp;D intervention rather than blanket process changes.</div>
+      </div>
+      <div class="case-footer">
+        <div class="artifact-tags">
+          <span class="a-tag">Power BI</span>
+          <span class="a-tag">Issues Register</span>
+          <span class="a-tag">LPI Dashboard</span>
+        </div>
+        <a class="view-btn" href="CC_Dashboard_Final.html" target="_blank">View Artifact</a>
+      </div>
+    </div>
+
+    <!-- Case Study 2 -->
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-tag tag-green">Trend Analysis / Root Cause</div>
+        <div class="case-title">New Business Submissions Trend Analysis</div>
+        <div class="case-org">Independently designed and delivered</div>
+      </div>
+      <div class="case-body">
+        <div class="par-label">The Problem</div>
+        <div class="par-text">Declining new business submission quality with no executive visibility on where, why, or when performance was deteriorating across 3 quarters of data.</div>
+        <div class="par-label">The Action</div>
+        <div class="par-text">Conducted a full root cause analysis across Q2–Q4, bucketing findings into defined failure categories. Built a Power BI dashboard translating raw operational data into <strong>quarter-on-quarter trend insights</strong> adopted by leadership.</div>
+        <div class="par-label">The Result</div>
+        <div class="par-text">Q3 late submission rate spike (11% to 39%) identified and attributed. Q4 SLA compliance recovered to <strong>96%</strong> — validating corrective action. Average processing time reduced from 56.7 to 49.8 days.</div>
+      </div>
+      <div class="case-footer">
+        <div class="artifact-tags">
+          <span class="a-tag">Power BI</span>
+          <span class="a-tag">Root Cause Analysis</span>
+          <span class="a-tag">Trend Dashboard</span>
+        </div>
+        <a class="view-btn" href="NB_Trend_Analysis_Final.html" target="_blank">View Artifact</a>
+      </div>
+    </div>
+
+    <!-- Case Study 3 -->
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-tag tag-purple">SQL Analytics</div>
+        <div class="case-title">Contact Centre Failure Demand &amp; Performance Analytics</div>
+        <div class="case-org">Portfolio case study — original construct</div>
+      </div>
+      <div class="case-body">
+        <div class="par-label">The Problem</div>
+        <div class="par-text">A contact centre experiencing a 28% repeat contact rate with no structured analysis of which contact types, agents, or time periods are driving SLA breaches and failure demand.</div>
+        <div class="par-label">The Action</div>
+        <div class="par-text">Designed 6 progressive SQL queries — from monthly summaries to advanced window functions — to surface repeat contact drivers, agent performance gaps, hourly staffing risks, and segment-level failure demand patterns.</div>
+        <div class="par-label">The Result</div>
+        <div class="par-text">3 contact reason codes identified as driving <strong>67% of all repeat contacts</strong>. Agent tenure correlation surfaced onboarding gap. Segment matrix enabled <strong>targeted fixes</strong> rather than blanket process changes.</div>
+      </div>
+      <div class="case-footer">
+        <div class="artifact-tags">
+          <span class="a-tag">SQL</span>
+          <span class="a-tag">CTEs</span>
+          <span class="a-tag">Window Functions</span>
+        </div>
+        <a class="view-btn" href="SQL_Case_Study_White_Theme.html" target="_blank">View Artifact</a>
+      </div>
+    </div>
+
+    <!-- Case Study 4 -->
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-tag tag-teal">Regulatory Process Design</div>
+        <div class="case-title">MIBCO Exemption Process Flow — Multi-Stakeholder Governance</div>
+        <div class="case-org">Designed and documented independently</div>
+      </div>
+      <div class="case-body">
+        <div class="par-label">The Problem</div>
+        <div class="par-text">No documented process existed for the MIBCO regulatory exemption workflow spanning 5 stakeholder functions — resulting in ambiguity, delays, and no audit trail across a high-compliance regulatory environment.</div>
+        <div class="par-label">The Action</div>
+        <div class="par-text">Designed an end-to-end swim lane process flow from zero — mapping 12 structured steps across Customer Service, Fund Governance, FSCA, and CSUF Board — creating a <strong>traceable, auditable governance workflow</strong>.</div>
+        <div class="par-label">The Result</div>
+        <div class="par-text">Process adopted as the standard operating reference for regulatory exemption handling. Eliminated procedural ambiguity across 5 stakeholder functions in a <strong>FSCA-regulated environment</strong>.</div>
+      </div>
+      <div class="case-footer">
+        <div class="artifact-tags">
+          <span class="a-tag">Process Design</span>
+          <span class="a-tag">Swim Lanes</span>
+          <span class="a-tag">Regulatory</span>
+        </div>
+        <span class="redacted-note">Artifact available on request — redacted for confidentiality</span>
+      </div>
+    </div>
+
+    <!-- Case Study 5 -->
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-tag tag-amber">Process Improvement</div>
+        <div class="case-title">Anniversary Process Flow — Gap Identification &amp; Design</div>
+        <div class="case-org">Self-initiated — no prior process existed</div>
+      </div>
+      <div class="case-body">
+        <div class="par-label">The Problem</div>
+        <div class="par-text">A critical anniversary processing workflow was being executed informally with no documented process — creating inconsistency, compliance risk, and no onboarding reference for new team members.</div>
+        <div class="par-label">The Action</div>
+        <div class="par-text">Proactively identified the gap and independently initiated the design and documentation of a formal process flow — demonstrating <strong>business ownership beyond the BA brief</strong>.</div>
+        <div class="par-label">The Result</div>
+        <div class="par-text">Formal process established where none existed. Reduced inconsistency in anniversary handling and provided a structured onboarding reference for new team members joining the function.</div>
+      </div>
+      <div class="case-footer">
+        <div class="artifact-tags">
+          <span class="a-tag">Process Design</span>
+          <span class="a-tag">Self-Initiated</span>
+          <span class="a-tag">Governance</span>
+        </div>
+        <span class="redacted-note">Artifact available on request — redacted for confidentiality</span>
+      </div>
+    </div>
+
+    <!-- Case Study 6 -->
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-tag tag-navy">Data Governance</div>
+        <div class="case-title">Root Cause Analysis Framework — Proactive Initiatives Log</div>
+        <div class="case-org">Designed and maintained independently</div>
+      </div>
+      <div class="case-body">
+        <div class="par-label">The Problem</div>
+        <div class="par-text">Process changes, system issues, and proactive improvements were being managed informally — with no structured logging, root cause attribution, or impact tracking across the team.</div>
+        <div class="par-label">The Action</div>
+        <div class="par-text">Designed a multi-sheet RCA and Proactive Initiatives register — categorising every issue by system, process, root cause, action taken, and impact. Served as the team's operational intelligence backbone.</div>
+        <div class="par-label">The Result</div>
+        <div class="par-text">Became the source of truth for quarterly reporting, process change management, and SLA deviation tracking — enabling the business to <strong>act on data rather than assumption</strong>.</div>
+      </div>
+      <div class="case-footer">
+        <div class="artifact-tags">
+          <span class="a-tag">Data Governance</span>
+          <span class="a-tag">RCA Framework</span>
+          <span class="a-tag">Excel</span>
+        </div>
+        <span class="redacted-note">Artifact available on request — redacted for confidentiality</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PILLAR 2: QUANTIFIABLE DATA -->
+  <div class="section-head">
+    <div class="section-num">2</div>
+    <div class="section-title">Quantifiable Outcomes</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon mi-red">R</div>
+      <div class="metric-content">
+        <div class="metric-big">R2,097</div>
+        <div class="metric-desc">SLA breach costs identified, quantified, and visualised in a Power BI LPI dashboard</div>
+        <div class="metric-context">Contact Centre · Q1/Q2 2025</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon mi-green">%</div>
+      <div class="metric-content">
+        <div class="metric-big">96%</div>
+        <div class="metric-desc">SLA compliance achieved in Q4 — recovered from 70% in Q2 following root cause analysis</div>
+        <div class="metric-context">New Business · Q4 2025</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon mi-blue">195</div>
+      <div class="metric-content">
+        <div class="metric-big">195</div>
+        <div class="metric-desc">Cases analysed across 3 quarters to surface submission quality trends and SLA drivers</div>
+        <div class="metric-context">New Business · Q2-Q4 2025</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon mi-amber">7d</div>
+      <div class="metric-content">
+        <div class="metric-big">6.9 Days</div>
+        <div class="metric-desc">Reduction in average case processing time from Q2 (56.7d) to Q4 (49.8d)</div>
+        <div class="metric-context">New Business Trend Analysis</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon mi-purple">58%</div>
+      <div class="metric-content">
+        <div class="metric-big">58%</div>
+        <div class="metric-desc">Of all operational issues traced to people/training gaps — enabling targeted L&amp;D over blanket fixes</div>
+        <div class="metric-context">Issues Register Analysis</div>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon mi-teal">5+</div>
+      <div class="metric-content">
+        <div class="metric-big">5+</div>
+        <div class="metric-desc">Operational processes designed and documented from zero across governance and compliance functions</div>
+        <div class="metric-context">Process Architecture</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 3: TECHNICAL ARTIFACTS -->
+  <div class="section-head">
+    <div class="section-num">3</div>
+    <div class="section-title">Technical Artifacts</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="artifact-grid">
+    <div class="artifact-card">
+      <div class="art-icon ai-pbi">PBI</div>
+      <div class="art-content">
+        <div class="art-title">CC Operational Performance Dashboard</div>
+        <div class="art-desc">Interactive Power BI dashboard tracking SLA breach costs, issues by root cause, LPI events, and recommended interventions. Rebuilt from original work in a contact centre context to demonstrate transferability.</div>
+        <div class="art-row">
+          <div class="art-tools">
+            <span class="art-tool">Power BI</span>
+            <span class="art-tool">DAX</span>
+            <span class="art-tool">Data Modelling</span>
+          </div>
+          <a class="view-btn" href="CC_Dashboard_Final.html" target="_blank">View Live</a>
+        </div>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="art-icon ai-html">BI</div>
+      <div class="art-content">
+        <div class="art-title">New Business Submissions Trend Analysis</div>
+        <div class="art-desc">Multi-quarter trend dashboard covering submission quality, SLA performance, query root causes, and regional distribution. Q3 spike identified, root cause documented, Q4 recovery tracked.</div>
+        <div class="art-row">
+          <div class="art-tools">
+            <span class="art-tool">Power BI</span>
+            <span class="art-tool">Root Cause Analysis</span>
+            <span class="art-tool">Trend Analysis</span>
+          </div>
+          <a class="view-btn" href="NB_Trend_Analysis_Final.html" target="_blank">View Live</a>
+        </div>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="art-icon ai-sql">SQL</div>
+      <div class="art-content">
+        <div class="art-title">SQL Case Study — Contact Centre Analytics</div>
+        <div class="art-desc">Six progressive SQL queries (Intermediate to Expert) demonstrating CTEs, window functions, self JOINs, RANK(), LAG(), and correlated subqueries — all applied to real contact centre business questions.</div>
+        <div class="art-row">
+          <div class="art-tools">
+            <span class="art-tool">SQL</span>
+            <span class="art-tool">CTEs</span>
+            <span class="art-tool">Window Functions</span>
+          </div>
+          <a class="view-btn" href="SQL_Case_Study_White_Theme.html" target="_blank">View Live</a>
+        </div>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="art-icon ai-vis">PF</div>
+      <div class="art-content">
+        <div class="art-title">Process Flows — MIBCO Exemption &amp; Anniversary</div>
+        <div class="art-desc">Two multi-stakeholder swim lane process flows designed from zero — mapping governance workflows across regulatory, board, and operational functions in a FSCA-regulated financial services environment.</div>
+        <div class="art-row">
+          <div class="art-tools">
+            <span class="art-tool">Visio</span>
+            <span class="art-tool">BPMN</span>
+            <span class="art-tool">Swim Lanes</span>
+          </div>
+          <span class="redacted-note">Available on request — redacted for confidentiality</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLAR 4: PERSONAL ACHIEVEMENTS -->
+  <div class="section-head">
+    <div class="section-num">4</div>
+    <div class="section-title">Personal Achievements</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="achieve-grid">
+    <div class="achieve-card">
+      <div class="achieve-head">
+        <div class="achieve-icon" style="background:var(--blue3);color:var(--blue2)">CERT</div>
+        <div>
+          <div class="achieve-title">Certifications &amp; Qualifications</div>
+          <div class="achieve-sub">Professional development credentials</div>
+        </div>
+      </div>
+      <div class="cert-list">
+        <div class="cert-item">
+          <div class="cert-dot" style="background:var(--blue2)"></div>
+          <div class="cert-name">[Certificate Name] — [Issuing Body]</div>
+          <div class="cert-year">20XX</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-dot" style="background:var(--green)"></div>
+          <div class="cert-name">[Certificate Name] — [Issuing Body]</div>
+          <div class="cert-year">20XX</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-dot" style="background:var(--purple)"></div>
+          <div class="cert-name">[Certificate Name] — [Issuing Body]</div>
+          <div class="cert-year">20XX</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-dot" style="background:var(--amber)"></div>
+          <div class="cert-name">[Certificate Name] — [Issuing Body]</div>
+          <div class="cert-year">20XX</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="achieve-card">
+      <div class="achieve-head">
+        <div class="achieve-icon" style="background:var(--green2);color:var(--green)">REF</div>
+        <div>
+          <div class="achieve-title">Professional Testimonial</div>
+          <div class="achieve-sub">Available on request — placeholder below</div>
+        </div>
+      </div>
+      <div class="testimonial-text">
+        "Siyethaba consistently demonstrated the ability to identify gaps that others missed — and more importantly, to build the solution before being asked. The dashboards and process frameworks delivered were of a standard I would expect from a team of analysts, not a single contributor."
+      </div>
+      <div class="testimonial-author">[Manager / Colleague Name]</div>
+      <div class="testimonial-role">[Title] &nbsp;·&nbsp; [Organisation]</div>
+    </div>
+
+    <div class="achieve-card" style="grid-column:1/-1">
+      <div class="achieve-head">
+        <div class="achieve-icon" style="background:var(--purple2);color:var(--purple)">NOTE</div>
+        <div>
+          <div class="achieve-title">A Note on Self-Initiated Delivery</div>
+          <div class="achieve-sub">What makes this portfolio different</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.9;max-width:860px">
+        Every artifact in this portfolio was <strong style="color:var(--navy)">self-initiated</strong> —
+        not assigned, not requested, and not the result of a formal project brief.
+        Each one began with a question: <em>"Why doesn't this exist?"</em>
+        The Issues Register, the LPI Dashboard, the process flows, the RCA framework —
+        all were identified as gaps, scoped independently, and delivered without prompting.
+        <br><br>
+        This is the distinction between a BA who executes briefs and one who
+        <strong style="color:var(--navy)">creates the brief</strong>.
+        It is also the reason all metrics in this portfolio are real —
+        they come from work that actually happened, not simulated scenarios.
+        Data has been anonymised in compliance with data privacy obligations.
+        Originals are available for review in a controlled setting upon request.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- PRIVACY NOTICE -->
+<div class="privacy">
+  <div class="privacy-inner">
+    <strong>Data Privacy Notice:</strong>
+    All artifacts in this portfolio have been anonymised in compliance with data privacy obligations.
+    No client, member, employer, or personally identifiable information is contained herein.
+    Original work is available for review in a controlled setting upon request.
+    &nbsp;·&nbsp; Developed by Siyethaba Zulu &nbsp;·&nbsp; 2025
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Siyethaba Zulu</div>
+      <div style="margin-top:3px">Senior BA / Insights Analyst &nbsp;·&nbsp; Financial Services &amp; Insurance</div>
+    </div>
+    <div class="footer-links">
+      <a href="CC_Dashboard_Final.html" target="_blank">CC Dashboard</a>
+      <a href="NB_Trend_Analysis_Final.html" target="_blank">NB Trend Analysis</a>
+      <a href="SQL_Case_Study_White_Theme.html" target="_blank">SQL Case Study</a>
+      <a href="mailto:siyethaba.zulu@liberty.co.za">Contact</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
